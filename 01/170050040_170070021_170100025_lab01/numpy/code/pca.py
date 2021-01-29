@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 file_name =  sys.argv[1]
 a = np.loadtxt(file_name,delimiter=',')
 
-outfile = '../data/out.png'
+outfile = '../results/out.png'
 
 a_mean = np.mean(a,axis=0,keepdims=True)
 a_std = np.std(a,axis=0,keepdims=True)
@@ -16,7 +16,8 @@ evalue , eigvec = np.linalg.eig(cov)
 values = np.argsort(evalue)[-2:]
 proj = eigvec[:,values]
 a_pca = a.dot(proj)
-recovered  = a_pca@(proj.T)
+# Verification code
+# recovered  = a_pca@(proj.T)
 #print (a_pca.shape)
 #print (np.allclose(recovered,a))
 plt.scatter(a_pca[:,0],a_pca[:,1])
