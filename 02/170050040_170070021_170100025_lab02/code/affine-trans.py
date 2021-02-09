@@ -22,7 +22,7 @@ distorted = cv2.imread(read_dir + "distorted.jpg")
 # Shape = (rows, cols, channels)
 desired_rows, desired_cols = 600, 600
 
-# Correspondence points: [x,y] Obtained from cv2.imshow
+# Correspondence points: [x,y] Obtained manually from cv2.imshow
 pts1 = np.float32([[0, 0],
                    [601, 61],
                    [61, 601]])
@@ -32,6 +32,7 @@ pts2 = np.float32([[0, 0],
 
 if mat == "api":
   H = cv2.getAffineTransform(pts1, pts2)
+
 elif mat == "manual":
   ## TODO: Manually derive 2*3 transformation matrix M
   '''
