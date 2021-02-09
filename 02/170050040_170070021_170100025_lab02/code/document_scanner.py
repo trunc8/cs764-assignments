@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 import imutils
 import cv2
 
-image = cv2.imread('../../data/scan.jpg')
+image = cv2.imread('../data/scan.jpg')
 
 grey_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -16,6 +16,7 @@ binary_image = cv2.threshold(grey_image, 120, 255, cv2.THRESH_BINARY)[1]
 contors = cv2.findContours(binary_image.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
 contors = imutils.grab_contours(contors)
 biggest_cont = max(contors, key=cv2.contourArea)
+print (biggest_cont.shape)
 br = -1e10
 tl = 1e10
 tr = -1e10
