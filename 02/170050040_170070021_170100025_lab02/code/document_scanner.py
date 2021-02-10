@@ -2,16 +2,11 @@ import numpy as np
 import cv2 
 
 
-image = cv2.imread('../data/document-1.jpg')
+image = cv2.imread('../data/scan.jpg')
 
 a=image.shape[0]
 b=image.shape[1]
 aspect = b/a
-
-resized = cv2.resize(image, (int(400*aspect),400), interpolation = cv2.INTER_AREA)
-cv2.imshow("f",resized)
-cv2.waitKey(0)
-cv2.imwrite('../data/document-1n.jpg', resized) 
 
 grey_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -44,7 +39,6 @@ for i in range(len(biggest_cont)):
                          
 corners = np.float32([tl_val, tr_val, br_val, bl_val]) 
 new_corners = np.float32([[0, 0], [400, 0], [400, 600], [0, 600]]) 
-image2 = image.copy() 
 
 H_matrix = cv2.getPerspectiveTransform(corners, new_corners) 
 
