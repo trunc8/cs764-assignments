@@ -9,14 +9,9 @@ b=image.shape[1]
 aspect = b/a
 
 grey_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
 binary_image = cv2.threshold(grey_image, 120, 255, cv2.THRESH_BINARY)[1]
-
 contors,_ = cv2.findContours(binary_image.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
-draw1 = cv2.drawContours(image.copy(), contors, -1, (0, 255, 0), 30)
-
 biggest_cont = max(contors, key=cv2.contourArea)
-draw = cv2.drawContours(image.copy(), biggest_cont, -1, (0, 255, 0), 30)
 
 br = -1e10
 tl = 1e10
