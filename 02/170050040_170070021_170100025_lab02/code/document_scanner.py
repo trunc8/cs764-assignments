@@ -1,8 +1,11 @@
 import numpy as np 
 import cv2 
+import argparse
 
-
-image = cv2.imread('../data/scan.jpg')
+parser = argparse.ArgumentParser(description='doc scan')
+parser.add_argument('-i')
+args = parser.parse_args()
+image = cv2.imread(args.i)
 
 a=image.shape[0]
 b=image.shape[1]
