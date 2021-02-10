@@ -34,18 +34,25 @@ if mat == "api":
   H = cv2.getAffineTransform(pts1, pts2)
 
 elif mat == "manual":
-  ## TODO: Manually derive 2*3 transformation matrix M
+  ## TODO: Manually derive 2*3 transformation matrix H
   '''
   H*X = Y
-  H: 2*3 Direct Linear Transform matrix
-  X: 3*3 Input image pixels in homogeneous coordinates
-  Y: 2*3 Output image pixels in euclidean coordinates
+  H: 2*3 Direct Linear Transform matrix. Since this is known to be shear transform, we manually append zero column at the end
+  X: 2*2 Input image pixels in euclidean coordinates
+  X_prime: 2*2 Output image pixels in euclidean coordinates
+  Solution: H = X_prime.X^{-1} and append zero_column
   '''
+  pts1 = np.float32([[601, 61],
+                     [61, 601]])
+  pts2 = np.float32([[600, 0],
+                     [0, 600]])
   X = pts1.transpose()
-  I = np.ones((1,3))
-  X = np.row_stack((X, I))
-  Y = pts2.transpose()
-  H = Y@np.linalg.inv(X)
+  # I = np.ones((1,2))
+  # X = np.row_stack((X, I))
+  X_prime = pts2.transpose()
+  H = X_prime@np.linalg.inv(X)
+  zero_column = np.zeros((2,1))
+  H = np.column_stack((H, zero_column))
 
 else:
   print("Incorrect input for method. Aborting!")
