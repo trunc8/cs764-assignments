@@ -20,9 +20,7 @@ list_corners = [(corners*(num_frames-x)+x*new_corners)/num_frames for x in range
 for this_corner in list_corners : 
     H_matrix = cv2.getPerspectiveTransform(corners, this_corner) 
     final = cv2.warpPerspective(image, H_matrix,  (1080,1080))
-    cv2.imshow("document_scan",final)
-    cv2.waitKey(wait_time)
-
-
-#H_matrix = cv2.getPerspectiveTransform(corners, new_corners)
-#final = cv2.warpPerspective(image, H_matrix,  (512,385)) 
+    cv2.imshow("obelisk",final)
+    key = cv2.waitKey(wait_time)
+    if key == ord('q'):
+        break
