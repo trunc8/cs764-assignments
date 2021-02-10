@@ -1,22 +1,21 @@
 import numpy as np 
 import cv2 
-from matplotlib import pyplot as plt 
-import imutils
-import cv2
+import argparse
 
-image = cv2.imread('../data/scan.jpg')
+parser = argparse.ArgumentParser(description='doc scan')
+parser.add_argument('-i')
+args = parser.parse_args()
+image = cv2.imread(args.i)
+
+a=image.shape[0]
+b=image.shape[1]
+aspect = b/a
 
 grey_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
 binary_image = cv2.threshold(grey_image, 120, 255, cv2.THRESH_BINARY)[1]
-# resized = cv2.resize(thresh, (200,300), interpolation = cv2.INTER_AREA)
-# cv2.imshow("f",resized)
-# cv2.waitKey(0)
-
-contors = cv2.findContours(binary_image.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
-contors = imutils.grab_contours(contors)
+contors,_ = cv2.findContours(binary_image.copy(), cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
 biggest_cont = max(contors, key=cv2.contourArea)
-print (biggest_cont.shape)
+
 br = -1e10
 tl = 1e10
 tr = -1e10
@@ -34,13 +33,14 @@ for i in range(len(biggest_cont)):
         tr = biggest_cont[i,0,0]-biggest_cont[i,0,1]
     if((-biggest_cont[i,0,0]+biggest_cont[i,0,1])>bl):
         bl_val = biggest_cont[i,0]  
-        bl = -biggest_cont[i,0,0]+biggest_cont[i,0,1]                  
+        bl = -biggest_cont[i,0,0]+biggest_cont[i,0,1]   
+                         
 corners = np.float32([tl_val, tr_val, br_val, bl_val]) 
-new_corners = np.float32([[0, 0], [600, 0], [600, 600], [0, 600]]) 
-  
+new_corners = np.float32([[0, 0], [400, 0], [400, 600], [0, 600]]) 
+
 H_matrix = cv2.getPerspectiveTransform(corners, new_corners) 
 
-final = cv2.warpPerspective(image, H_matrix, (600, 600)) 
+final = cv2.warpPerspective(image, H_matrix, (400, 600)) 
 
 cv2.imshow("document_scan",final)
 cv2.waitKey(0)
