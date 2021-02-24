@@ -7,9 +7,9 @@ parser.add_argument('-i')
 args = parser.parse_args()
 image = cv2.imread(args.i)
 
-a=image.shape[0]
-b=image.shape[1]
-aspect = b/a
+# a=image.shape[0]
+# b=image.shape[1]
+# aspect = b/a
 
 grey_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 binary_image = cv2.threshold(grey_image, 120, 255, cv2.THRESH_BINARY)[1]
