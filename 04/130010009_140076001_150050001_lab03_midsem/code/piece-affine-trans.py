@@ -13,9 +13,6 @@ import sys,copy
 read_img = "../data/piece/brick.png"
 save_img = "../results/piece-affine-results/brick.png"
 
-image = cv2.imread(read_img)
-
-
 rows, cols = image.shape[0], image.shape[1]
 desired_rows, desired_cols = 337, 25
 cycles = 3*np.pi
