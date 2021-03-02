@@ -89,5 +89,3 @@ res_final = mosaic.shape[0]/400
 resized = cv2.resize(mosaic, (int(mosaic.shape[1]/res_final), 400) , interpolation = cv2.INTER_AREA)
 cv2.imshow("Final",resized)
 cv2.waitKey(0)
-pathk = "../results/pano-manual-results/House/fi_House.jpg"
-cv2.imwrite(pathk,resized)
