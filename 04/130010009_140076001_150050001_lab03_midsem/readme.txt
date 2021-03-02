@@ -1,9 +1,26 @@
-(Follow this structure for readme.txt)
 Honor Code
-Roll Number
-Group Number
+I, Parth Shettiwar, confirm that our submission has no material, in total or in parts, that is
+plagiarized or copied.
+All the work (documents, code) that we am submitting is our own and is prepared and written by us
+alone.
+None of the submission is copy in full or in parts of any submission that does not belong to and has
+been prepared by us.
+Roll Number 170070021
+Group Number 07
 Percentage for Q1:  
-                  Roll Number 1: %age
-                  Roll Number 2: %age
-                  Roll Number 2: %age
-mention contribution in similar way for other questions..
+                  170050040: 100%
+                  170070021: 100%
+                  170100025: 100%
+Percentage for Q2.1:  
+                  170050040: 100%
+                  170070021: 100%
+                  170100025: 100%
+Percentage for Q2.2:  
+                  170050040: 100%
+                  170070021: 100%
+                  170100025: 100%
+Percentage for Q2.3:  
+                  170050040: 100%
+                  170070021: 100%
+                  170100025: 100%
+
