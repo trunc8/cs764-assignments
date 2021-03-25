@@ -137,7 +137,7 @@ img_points = np.array([[[692, 2988], [960, 2955], [1185, 2921], [651, 2696], [90
     [[417, 2579], [626, 2671], [818, 2746], [525, 2404], [709, 2496], [901, 2579]],
      [[567, 2829], [759, 2821], [934, 2804], [567, 2637], [751, 2629], [926, 2612]]],dtype = np.float32)
 print(img_points.shape)   
-book_points = np.float32([[0, 0, 0], [0,b,0],[l,b,0],[l,0,0],[0,0,w],[0,b,w],[l,b,w],[l,0,w]])
+book_points_old = np.float32([[0, 0, 0], [0,b,0],[l,b,0],[l,0,0],[0,0,w],[0,b,w],[l,b,w],[l,0,w]])
 real_world_points = np.array([[[0,0,0],[3,0,0],[6,0,0],[0,3,0],[3,3,0],[6,3,0]],
 [[0,0,0],[3,0,0],[6,0,0],[0,3,0],[3,3,0],[6,3,0]],
 [[0,0,0],[3,0,0],[6,0,0],[0,3,0],[3,3,0],[6,3,0]],
@@ -154,13 +154,16 @@ mtx = np.array(mtx)
 rt_matrix = [[math.cos(theta_rad),-math.sin(theta_rad),x],
             [math.sin(theta_rad),math.cos(theta_rad),y],
             [0,0,1]]
-book_temp = book_points.copy()
+book_temp = book_points_old.copy()
 book_temp[:,2] = 1   
-book_temp
+book_temp[:,0] = book_temp[:,0] - x
+book_temp[:,1] = book_temp[:,1] - y
+
 print(book_temp)
-print(book_points) 
+# print(book_points) 
         
 new_book = rt_matrix@np.transpose(book_temp)
+book_points = book_points_old.copy()
 book_points[:,:2] = np.transpose(new_book)[:,:2]
 print(book_points)
 print(new_book)
@@ -168,7 +171,8 @@ print(new_book)
 # project 3D points to image plane
 for p in range(len(img_points)):
     ret,rvecs, tvecs = cv2.solvePnP(real_world_points[p], img_points[p], mtx, None)
-    projects, jac = cv2.projectPoints(book_points, rvecs, tvecs, mtx, None) 
+    projects, jac = cv2.projectPoints(book_points_old, rvecs, tvecs, mtx, None)
+    print(projects,"ggggggg") 
     im = draw_book_on_img(img[p], projects)
     cv2.namedWindow('gg',cv2.WINDOW_NORMAL)
 
