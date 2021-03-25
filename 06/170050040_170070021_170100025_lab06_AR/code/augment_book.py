@@ -8,6 +8,7 @@ import numpy as np
 import math 
 
 parser = argparse.ArgumentParser()
+parser.add_argument('path')
 parser.add_argument('-w', default=1.5)
 parser.add_argument('-l', default=5)
 parser.add_argument('-b', default=3)
@@ -16,7 +17,7 @@ parser.add_argument('-y', default=1000)
 parser.add_argument('-theta', default=1000)
 
 args = parser.parse_args()
-
+args
 w = float(args.w)
 l = float(args.l)
 b = float(args.b)
@@ -24,7 +25,7 @@ x = int(args.x)
 y = int(args.y)
 theta = int(args.theta)
 theta_rad = (theta*math.pi)/180
-
+print(args.path)
 
 def draw_book_on_img(image, projects):
     centre_old = (projects[0] +projects[2])/2
