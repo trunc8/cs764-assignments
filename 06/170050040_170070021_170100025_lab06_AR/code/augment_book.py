@@ -7,10 +7,7 @@ import math
 
 parser = argparse.ArgumentParser()
 parser.add_argument('path')
-<<<<<<< HEAD
-=======
 
->>>>>>> a6b12d244b2fcde1ebfc1fc8db48416a105074cc
 parser.add_argument('-w', default=1.5)
 parser.add_argument('-l', default=5)
 parser.add_argument('-b', default=3)
@@ -19,13 +16,9 @@ parser.add_argument('-y', default=1000)
 parser.add_argument('-theta', default=1000)
 
 args = parser.parse_args()
-<<<<<<< HEAD
-args
-=======
 NUMBER_OF_WALL_IMAGES = 6
 
 
->>>>>>> a6b12d244b2fcde1ebfc1fc8db48416a105074cc
 w = float(args.w)
 l = float(args.l)
 b = float(args.b)
@@ -33,10 +26,6 @@ x = int(args.x)
 y = int(args.y)
 theta = int(args.theta)
 theta_rad = (theta*math.pi)/180
-<<<<<<< HEAD
-print(args.path)
-=======
->>>>>>> a6b12d244b2fcde1ebfc1fc8db48416a105074cc
 
 def draw_book_on_img(image, projects):
     centre_old = (projects[0] +projects[2])/2
