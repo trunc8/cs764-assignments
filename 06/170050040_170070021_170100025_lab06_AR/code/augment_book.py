@@ -13,7 +13,7 @@ parser.add_argument('-l', default=5)
 parser.add_argument('-b', default=3)
 parser.add_argument('-x', default=1000)
 parser.add_argument('-y', default=1000)
-parser.add_argument('-theta', default=40)
+parser.add_argument('-theta', default=1000)
 
 args = parser.parse_args()
 NUMBER_OF_WALL_IMAGES = 6
@@ -79,7 +79,7 @@ def draw_texture_side_on_img(image, projects,mappingImage):
     return image
 
 def get_data():
-  directory = os.path.join(sys.path[0], args.path)
+  directory = os.path.join(args.path)
   image_names = [f for f in os.listdir(directory) if 
           os.path.isfile(os.path.join(directory,f))]
   image_names.sort()
@@ -135,7 +135,7 @@ real_world_points = np.array([[[0,0,0],[3,0,0],[6,0,0],[0,3,0],[3,3,0],[6,3,0]],
 ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(real_world_points, img_points, imm[0].shape[1::-1], None, None)
 mtx = np.array(mtx)
 
-if (theta == 1000):
+if (theta != 1000):
     book_temp = book_points_old.copy()
     book_temp[:,2] = 1   
     book_temp[:,0] = book_temp[:,0] - l/2
@@ -155,28 +155,22 @@ if (theta == 1000):
     
 for p in range(NUMBER_OF_WALL_IMAGES):
     ret,rvecs, tvecs = cv2.solvePnP(real_world_points[p], img_points[p], mtx, None)
+
+    rotM = cv2.Rodrigues(rvecs)[0]
+    cameraPosition = (-np.matrix(rotM).T * np.matrix(tvecs))
+    dists = np.linalg.norm(book_points_old[:4]-cameraPosition.transpose(1,0),axis=1)
+    closest = np.argmin(dists)
+    farthest = np.argmax(dists)
+
     projects, jac = cv2.projectPoints(book_points_old, rvecs, tvecs, mtx, None)
+
     im = imm[p]
-    #im = draw_book_on_img(im, projects)
-    if (p == 0):
-        im = draw_texture_side_on_img(im, projects[[0,4,7,3],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
-        im = draw_texture_side_on_img(im, projects[[0,4,5,1],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
-    elif (p == 1):
-        im = draw_texture_side_on_img(im, projects[[2,6,7,3],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
-        im = draw_texture_side_on_img(im, projects[[2,6,5,1],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
-    elif (p == 2):
-        im = draw_texture_side_on_img(im, projects[[0,4,7,3],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
-        im = draw_texture_side_on_img(im, projects[[0,4,5,1],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
-    elif (p == 3):
-        im = draw_texture_side_on_img(im, projects[[0,4,7,3],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
-        im = draw_texture_side_on_img(im, projects[[0,4,5,1],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
-    elif (p == 4):
-        im = draw_texture_side_on_img(im, projects[[2,6,7,3],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
-        im = draw_texture_side_on_img(im, projects[[0,4,7,3],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
-    elif (p == 5):
-        im = draw_texture_side_on_img(im, projects[[2,6,7,3],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
-        im = draw_texture_side_on_img(im, projects[[0,4,7,3],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
+    for x in [0,1,2,3]:
+        if (x != closest and x != farthest):
+            im = draw_texture_side_on_img(im, projects[[closest,closest+4,x+4,x],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
     
+    
+    #im = draw_book_on_img(im, projects)
     im = draw_texture_front_on_img(im, projects[4:,0,:],imm[NUMBER_OF_WALL_IMAGES])
     
     cv2.namedWindow('gg',cv2.WINDOW_NORMAL)
