@@ -164,10 +164,11 @@ for p in range(NUMBER_OF_WALL_IMAGES):
 
     projects, jac = cv2.projectPoints(book_points_old, rvecs, tvecs, mtx, None)
 
+    sides = [(1,0),(2,1),(3,2),(0,3)]
     im = imm[p]
-    for x in [0,1,2,3]:
-        if (x != closest and x != farthest):
-            im = draw_texture_side_on_img(im, projects[[closest,closest+4,x+4,x],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
+    for x in sides:
+        if (x[0] != farthest and x[1] != farthest):
+            im = draw_texture_side_on_img(im, projects[[x[0],x[0]+4,x[1]+4,x[1]],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
     
     
     #im = draw_book_on_img(im, projects)
