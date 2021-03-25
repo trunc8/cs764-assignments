@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-
-
 import argparse
 import cv2
 import sys, os
@@ -9,15 +7,25 @@ import math
 
 parser = argparse.ArgumentParser()
 parser.add_argument('path')
+<<<<<<< HEAD
+=======
+
+>>>>>>> a6b12d244b2fcde1ebfc1fc8db48416a105074cc
 parser.add_argument('-w', default=1.5)
 parser.add_argument('-l', default=5)
 parser.add_argument('-b', default=3)
 parser.add_argument('-x', default=1000)
 parser.add_argument('-y', default=1000)
-parser.add_argument('-theta', default=1000)
+parser.add_argument('-theta', default=40)
 
 args = parser.parse_args()
+<<<<<<< HEAD
 args
+=======
+NUMBER_OF_WALL_IMAGES = 6
+
+
+>>>>>>> a6b12d244b2fcde1ebfc1fc8db48416a105074cc
 w = float(args.w)
 l = float(args.l)
 b = float(args.b)
@@ -25,7 +33,10 @@ x = int(args.x)
 y = int(args.y)
 theta = int(args.theta)
 theta_rad = (theta*math.pi)/180
+<<<<<<< HEAD
 print(args.path)
+=======
+>>>>>>> a6b12d244b2fcde1ebfc1fc8db48416a105074cc
 
 def draw_book_on_img(image, projects):
     centre_old = (projects[0] +projects[2])/2
@@ -49,39 +60,57 @@ def draw_book_on_img(image, projects):
  
     return image
 
+def draw_texture_front_on_img(image, projects,mappingImage):
+    projects = np.array(projects,np.float32)
+    projects = projects.reshape(4,2)
+    b = mappingImage.shape[1]
+    l = mappingImage.shape[0]
+    
+    src_points = np.array([[0, 0], [0,b],[l,b],[l,0]]).astype(np.float32)
+    #src_points = np.array([[0,0], [0,b],[l,0],[l,b]]).astype(np.float32)
+    transform = cv2.getPerspectiveTransform(src_points, projects)
+    dst = cv2.warpPerspective(mappingImage,transform,(image.shape[1],image.shape[0]))
+    image = np.copy(image)
+    np.putmask(image, dst>0, dst)
+    return image
+
+def draw_texture_side_on_img(image, projects,mappingImage):
+    mappingImage = mappingImage.transpose(1,0,2)
+    projects = np.array(projects,np.float32)
+    projects = projects.reshape(4,2)
+    b = mappingImage.shape[0]
+    l = mappingImage.shape[1]
+    
+    #src_points = np.array([[0, 0], [0,b],[l,b],[l,0]]).astype(np.float32)
+    src_points = np.array([[0,0], [0,b],[l,b],[l,0]]).astype(np.float32)
+    transform = cv2.getPerspectiveTransform(src_points, projects)
+    dst = cv2.warpPerspective(mappingImage,transform,(image.shape[1],image.shape[0]))
+    image = np.copy(image)
+    np.putmask(image, dst>0, dst)
+    return image
+
 def get_data():
-  directory = os.path.join(sys.path[0], "../data/augment_book/")
-  images = [f for f in os.listdir(directory) if 
+  directory = os.path.join(sys.path[0], args.path)
+  image_names = [f for f in os.listdir(directory) if 
           os.path.isfile(os.path.join(directory,f))]
-  images.sort()
-  NUMBER_OF_WALL_IMAGES = 6
-  front_path = os.path.join(directory, images[NUMBER_OF_WALL_IMAGES])
+  image_names.sort()
+  images = []
+  for i in range(NUMBER_OF_WALL_IMAGES):
+    wall_path = os.path.join(directory, image_names[i])
+    wall = cv2.imread(wall_path)
+    images.append(wall)
+  front_path = os.path.join(directory, image_names[NUMBER_OF_WALL_IMAGES])
   front = cv2.imread(front_path)
-  side_path = os.path.join(directory, images[NUMBER_OF_WALL_IMAGES+2])
+  front = front[::-1,:,:]
+  images.append(front)  
+  side_path = os.path.join(directory, image_names[NUMBER_OF_WALL_IMAGES+2])
   side = cv2.imread(side_path)
-  wall_path = os.path.join(directory, images[0])
-  wall = cv2.imread(wall_path)
-  # cv2.imshow("front", front)
-  # cv2.imshow("side", side)
-  # cv2.waitKey(0)
+  side = side[::-1,::-1,:]
+  images.append(side)  
   return images
-img1_points = []
-img2_points = []
-img3_points = []
-img4_points = []
-img5_points = []
-img6_points = []
 
 imm = get_data()
-img = []
-img.append(cv2.imread("../data/augment_book/"+imm[0]))
-img.append(cv2.imread("../data/augment_book/"+imm[1]))
-img.append(cv2.imread("../data/augment_book/"+imm[2]))
-img.append(cv2.imread("../data/augment_book/"+imm[3]))
-img.append(cv2.imread("../data/augment_book/"+imm[4]))
-img.append(cv2.imread("../data/augment_book/"+imm[5]))
-
-res = img[0].shape[0]/600
+res = imm[0].shape[0]/600
 
 def coordinates_click(event, x, y, flags, params): 
   
@@ -98,47 +127,15 @@ def coordinates_click(event, x, y, flags, params):
     elif event == cv2.EVENT_LBUTTONDOWN and params=="image6":
         img6_points.append([x,y])                    
 
-
-# cv2.namedWindow('image1',cv2.WINDOW_NORMAL)
-# cv2.namedWindow('image2',cv2.WINDOW_NORMAL)
-# cv2.namedWindow('image3',cv2.WINDOW_NORMAL)
-# cv2.namedWindow('image4',cv2.WINDOW_NORMAL)
-# cv2.namedWindow('image5',cv2.WINDOW_NORMAL)
-# cv2.namedWindow('image6',cv2.WINDOW_NORMAL)
-
-# cv2.resizeWindow('image1', (min(int(img[0].shape[1]/res),600),600))
-# cv2.resizeWindow('image2', (min(int(img[0].shape[1]/res),600),600))
-# cv2.resizeWindow('image3', (min(int(img[0].shape[1]/res),600),600))
-# cv2.resizeWindow('image4', (min(int(img[0].shape[1]/res),600),600))
-# cv2.resizeWindow('image5', (min(int(img[0].shape[1]/res),600),600))
-# cv2.resizeWindow('image6', (min(int(img[0].shape[1]/res),600),600))
-
-# cv2.imshow('image1', img[0])
-# cv2.imshow('image2', img[1])
-# cv2.imshow('image3', img[2])
-# cv2.imshow('image4', img[3])
-# cv2.imshow('image5', img[4])
-# cv2.imshow('image6', img[5])
-
-# cv2.setMouseCallback('image1', coordinates_click, "image1") 
-# cv2.setMouseCallback('image2', coordinates_click, "image2") 
-# cv2.setMouseCallback('image3', coordinates_click, "image3") 
-# cv2.setMouseCallback('image4', coordinates_click, "image4") 
-# cv2.setMouseCallback('image5', coordinates_click, "image5") 
-# cv2.setMouseCallback('image6', coordinates_click, "image6") 
-
-# cv2.waitKey(0)
-
-
-
-
 img_points = np.array([[[692, 2988], [960, 2955], [1185, 2921], [651, 2696], [901, 2679], [1135, 2654]],
  [[734, 3005], [934, 2946], [1118, 2921], [701, 2838], [909, 2796], [1101, 2754]],
   [[567, 3038], [834, 3021], [1076, 3005], [559, 2779], [809, 2771], [1051, 2754]],
    [[818, 3055], [1043, 2980], [1243, 2913], [734, 2829], [960, 2771], [1160, 2704]],
     [[417, 2579], [626, 2671], [818, 2746], [525, 2404], [709, 2496], [901, 2579]],
      [[567, 2829], [759, 2821], [934, 2804], [567, 2637], [751, 2629], [926, 2612]]],dtype = np.float32)
+
 book_points_old = np.float32([[0, 0, 0], [0,b,0],[l,b,0],[l,0,0],[0,0,w],[0,b,w],[l,b,w],[l,0,w]])
+
 real_world_points = np.array([[[0,0,0],[3,0,0],[6,0,0],[0,3,0],[3,3,0],[6,3,0]],
 [[0,0,0],[3,0,0],[6,0,0],[0,3,0],[3,3,0],[6,3,0]],
 [[0,0,0],[3,0,0],[6,0,0],[0,3,0],[3,3,0],[6,3,0]],
@@ -146,37 +143,55 @@ real_world_points = np.array([[[0,0,0],[3,0,0],[6,0,0],[0,3,0],[3,3,0],[6,3,0]],
 [[0,0,0],[3,0,0],[6,0,0],[0,3,0],[3,3,0],[6,3,0]],
 [[0,0,0],[3,0,0],[6,0,0],[0,3,0],[3,3,0],[6,3,0]]],dtype = np.float32)
 
-ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(real_world_points, img_points, img[0].shape[1::-1], None, None)
-
+ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(real_world_points, img_points, imm[0].shape[1::-1], None, None)
 mtx = np.array(mtx)
 
-
-rt_matrix = [[math.cos(theta_rad),-math.sin(theta_rad),l/2],
-            [math.sin(theta_rad),math.cos(theta_rad),b/2],
-            [0,0,1]]
-book_temp = book_points_old.copy()
-book_temp[:,2] = 1   
-book_temp[:,0] = book_temp[:,0] - l/2
-book_temp[:,1] = book_temp[:,1] - b/2
-
+if (theta == 1000):
+    book_temp = book_points_old.copy()
+    book_temp[:,2] = 1   
+    book_temp[:,0] = book_temp[:,0] - l/2
+    book_temp[:,1] = book_temp[:,1] - b/2
+    
+    rt_matrix = [[math.cos(theta_rad),-math.sin(theta_rad),l/2],
+                 [math.sin(theta_rad),math.cos(theta_rad),b/2],
+                 [0,0,1]]
 
         
-new_book = rt_matrix@np.transpose(book_temp)
-book_points = book_points_old.copy()
-book_points[:,:2] = np.transpose(new_book)[:,:2]
+    new_book = rt_matrix@np.transpose(book_temp)
+    book_points = book_points_old.copy()
+    book_points[:,:2] = np.transpose(new_book)[:,:2]
 
+    book_points_old =  book_points
 
-book_points_old =  book_points*(theta!=1000) + book_points_old*(theta==1000)
-# new_book[]
-# project 3D points to image plane
-for p in range(len(img_points)):
+    
+for p in range(NUMBER_OF_WALL_IMAGES):
     ret,rvecs, tvecs = cv2.solvePnP(real_world_points[p], img_points[p], mtx, None)
     projects, jac = cv2.projectPoints(book_points_old, rvecs, tvecs, mtx, None)
-    im = draw_book_on_img(img[p], projects)
+    im = imm[p]
+    #im = draw_book_on_img(im, projects)
+    if (p == 0):
+        im = draw_texture_side_on_img(im, projects[[0,4,7,3],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
+        im = draw_texture_side_on_img(im, projects[[0,4,5,1],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
+    elif (p == 1):
+        im = draw_texture_side_on_img(im, projects[[2,6,7,3],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
+        im = draw_texture_side_on_img(im, projects[[2,6,5,1],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
+    elif (p == 2):
+        im = draw_texture_side_on_img(im, projects[[0,4,7,3],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
+        im = draw_texture_side_on_img(im, projects[[0,4,5,1],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
+    elif (p == 3):
+        im = draw_texture_side_on_img(im, projects[[0,4,7,3],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
+        im = draw_texture_side_on_img(im, projects[[0,4,5,1],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
+    elif (p == 4):
+        im = draw_texture_side_on_img(im, projects[[2,6,7,3],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
+        im = draw_texture_side_on_img(im, projects[[0,4,7,3],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
+    elif (p == 5):
+        im = draw_texture_side_on_img(im, projects[[2,6,7,3],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
+        im = draw_texture_side_on_img(im, projects[[0,4,7,3],0,:],imm[NUMBER_OF_WALL_IMAGES+1])
+    
+    im = draw_texture_front_on_img(im, projects[4:,0,:],imm[NUMBER_OF_WALL_IMAGES])
+    
     cv2.namedWindow('gg',cv2.WINDOW_NORMAL)
 
-    cv2.resizeWindow('gg', (min(int(img[p].shape[1]/res),600),600))
+    cv2.resizeWindow('gg', (min(int(imm[p].shape[1]/res),600),600))
     cv2.imshow("gg",im)
     cv2.waitKey(0)
-
-  
